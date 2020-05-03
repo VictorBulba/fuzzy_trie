@@ -5,7 +5,7 @@ use crate::Inserter;
 
 #[derive(Clone, Debug)]
 pub(crate) enum Node {
-	// leaf and sub nodes
+    // leaf and sub nodes
     Branch(char, Vec<Node>),
     ValueIndex(usize),
 }
@@ -19,20 +19,20 @@ impl Node {
 
     pub(crate) const fn new_value_index(index: usize) -> Self {
         Self::ValueIndex(index)
-	}
-	
+    }
+    
 
-	/// Find node with a given leaf index
-	fn find_node(branch: &mut Vec<Node>, leaf: char) -> Option<usize> {
-		for (i, node) in branch.iter_mut().enumerate() {
-			if let Self::Branch(l, _) = node {
-				if *l == leaf  {
-					return Some(i)
-				}
-			}
-		}
-		None
-	}
+    /// Find node with a given leaf index
+    fn find_node(branch: &mut Vec<Node>, leaf: char) -> Option<usize> {
+        for (i, node) in branch.iter_mut().enumerate() {
+            if let Self::Branch(l, _) = node {
+                if *l == leaf  {
+                    return Some(i)
+                }
+            }
+        }
+        None
+    }
 
 
     fn next_node(&mut self, leaf: char) -> &mut Self {
@@ -57,8 +57,8 @@ impl Node {
         let branch = match self {
             Self::Branch(_, br) => br,
             Self::ValueIndex(_) => unreachable!(),
-		};
-		Inserter::new(values, branch)
+        };
+        Inserter::new(values, branch)
     }
 
 
@@ -66,8 +66,8 @@ impl Node {
         let mut node = self;
         for c in key.chars() {
             node = node.next_node(c);
-		}
-		node.insert_value(values)
+        }
+        node.insert_value(values)
     }
 
     
