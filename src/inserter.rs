@@ -9,7 +9,7 @@ pub struct Inserter<'a, T> {
 
 
 impl<'a, T> Inserter<'a, T> {
-    /// Consume self and insert a value
+    /// Consumes self and insert a value
     #[inline]
     pub fn insert(self, value: T) {
         self.values.push(value);

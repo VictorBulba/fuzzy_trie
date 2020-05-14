@@ -57,7 +57,7 @@ pub struct FuzzyTrie<T> {
 
 
 impl<T> FuzzyTrie<T> {
-    /// Create new fuzzy trie and Levenshtein automaton builder
+    /// Creates new fuzzy trie and Levenshtein automaton builder
     /// with given max_distance and dameru params
     #[inline]
     pub fn new(max_distance: u8, damerau: bool) -> Self {
@@ -66,7 +66,7 @@ impl<T> FuzzyTrie<T> {
     }
 
 
-    /// Create new fuzzy trie with yours Levenshtein automaton builder
+    /// Creates new fuzzy trie with yours Levenshtein automaton builder
     #[inline]
     pub fn with_automaton_builder(dfa_builder: Arc<LevenshteinAutomatonBuilder>) -> Self {
         let values = Vec::new();
@@ -75,7 +75,7 @@ impl<T> FuzzyTrie<T> {
     }
 
 
-    /// Insert value to trie
+    /// Inserts value to trie
     /// Returns inserter, to make possible using a value field as key
     /// See `Inserter` for additional information
     #[inline]
@@ -103,5 +103,13 @@ impl<T> FuzzyTrie<T> {
     #[inline]
     pub fn iter(&self) -> Iter<'_, T> {
         self.values.iter()
+    }
+
+
+    /// Destructs self into inner vec of values
+    #[inline]
+    #[allow(clippy::missing_const_for_fn)]
+    pub fn into_value(self) -> Vec<T> {
+        self.values
     }
 }
