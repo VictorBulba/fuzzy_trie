@@ -112,4 +112,11 @@ impl<T> FuzzyTrie<T> {
     pub fn into_value(self) -> Vec<T> {
         self.values
     }
+
+
+    /// Len of inner values vector
+    #[inline]
+    pub fn len(&self) -> usize {
+        self.values.len()
+    }
 }
