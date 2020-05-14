@@ -4,6 +4,8 @@
 
 //! Key-value collection to make fuzzy searches
 
+#[cfg(test)]
+mod tests;
 mod branch;
 mod inserter;
 mod collector;

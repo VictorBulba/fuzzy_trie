@@ -86,7 +86,7 @@ impl Node {
         let mut new_state = state;
         let mut char_buf = [0; 4];
         for b in leaf.encode_utf8(&mut char_buf).bytes() {
-            new_state = dfa.transition(state, b);
+            new_state = dfa.transition(new_state, b);
         }
         if new_state == SINK_STATE { return }
         for node in branch {
