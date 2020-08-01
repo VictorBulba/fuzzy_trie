@@ -1,5 +1,3 @@
-
-
 /// Collector for searches
 /// 
 /// When trie makes a search it walks over the nodes

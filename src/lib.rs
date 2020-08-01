@@ -9,13 +9,14 @@ mod tests;
 mod branch;
 mod inserter;
 mod collector;
+mod config;
 
 use std::slice::Iter;
-use std::sync::Arc;
 use levenshtein_automata::LevenshteinAutomatonBuilder;
 use branch::Node;
 pub use inserter::Inserter;
 pub use collector::Collector;
+pub use config::*;
 
 
 /// FuzzyTrie is a trie with a LevensteinAutomata to make fuzzy searches
@@ -50,35 +51,52 @@ pub use collector::Collector;
 /// assert_eq!(vanila_iter.next(), None);
 /// ```
 /// 
-#[derive(Clone)]
 pub struct FuzzyTrie<T> {
     values: Vec<T>,
     root: Node,
-    dfa_builder: Arc<LevenshteinAutomatonBuilder>,
+    dfa_builders: Vec<(LevenshteinAutomatonBuilder, usize)>,
+    default_dfa_builder: LevenshteinAutomatonBuilder,
 }
 
 
 impl<T> FuzzyTrie<T> {
-    /// Creates new fuzzy trie and Levenshtein automaton builder
-    /// with given max_distance and dameru params
+    /// Creates new fuzzy trie with 
+    /// given distance and dameru params
     #[inline]
-    pub fn new(max_distance: u8, damerau: bool) -> Self {
-        let dfa_builder = LevenshteinAutomatonBuilder::new(max_distance, damerau);
-        Self::with_automaton_builder(Arc::from(dfa_builder))
+    pub fn new(distance: u8, damerau: bool) -> Self {
+        let default = LevenshteinConfig{distance, damerau};
+        let config = Config{default, other: Vec::default()};
+        Self::new_with_config(&config)
     }
 
 
-    /// Creates new fuzzy trie with yours Levenshtein automaton builder
+    /// Creates new fuzzy trie
+    /// from given config
     #[inline]
-    pub fn with_automaton_builder(dfa_builder: Arc<LevenshteinAutomatonBuilder>) -> Self {
+    pub fn new_with_config(config: &Config) -> Self {
+        let default_dfa_builder = LevenshteinAutomatonBuilder::new(config.default.distance, config.default.damerau);
+        let mut dfa_builders: Vec<_> = config.other.iter()
+            .map(|(cfg, len)| (LevenshteinAutomatonBuilder::new(cfg.distance, cfg.damerau), *len))
+            .collect();
+        dfa_builders.sort_by_key(|(_, l)| *l);
         let values = Vec::new();
         let root = Node::new_branch('\0');
-        Self{values, root, dfa_builder}
+        Self{values, root, dfa_builders: dfa_builders, default_dfa_builder}
+    }
+
+
+    fn choose_dfa_builder(&self, len: usize) -> &LevenshteinAutomatonBuilder {
+        for (builder, l) in self.dfa_builders.iter() {
+            if len <= *l {
+                return builder
+            }
+        }
+        return &self.default_dfa_builder
     }
 
 
     /// Inserts value to trie
-    /// Returns inserter, to make possible using a value field as key
+    /// Returns inserter, to make possible using the value field as a key
     /// See `Inserter` for additional information
     #[inline]
     pub fn insert<'a>(&'a mut self, key: &str) -> Inserter<'a, T> {
@@ -94,7 +112,7 @@ impl<T> FuzzyTrie<T> {
             Node::Branch(_, branches) => branches,
             _ => unreachable!(),
         };   
-        let dfa = self.dfa_builder.build_dfa(key);
+        let dfa = self.choose_dfa_builder(key.len()).build_dfa(key);
         for br in branches {
             br.fuzzy_search(&self.values, &dfa, dfa.initial_state(), out);
         }

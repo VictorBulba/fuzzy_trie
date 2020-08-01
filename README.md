@@ -31,3 +31,5 @@ assert_eq!(vanila_iter.next(), Some((0, &"vanilla item")));
 assert_eq!(vanila_iter.next(), Some((2, &"vanllo item")));
 assert_eq!(vanila_iter.next(), None);
 ```
+
+**Some more examples are in `tests.rs`**
