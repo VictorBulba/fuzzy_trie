@@ -71,8 +71,7 @@ impl Node {
     }
 
     
-    #[inline]
-    pub fn fuzzy_search<'a, T>(&'a self, values: &'a [T], dfa: &DFA, state: u32, out: &mut impl Collector<'a, T>) {
+    pub(crate) fn fuzzy_search<'a, T>(&'a self, values: &'a [T], dfa: &DFA, state: u32, out: &mut impl Collector<'a, T>) {
         let (leaf, branch) = match self {
             Self::Branch(leaf, branch) => (leaf, branch),
             Self::ValueIndex(i) => {

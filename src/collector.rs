@@ -33,3 +33,11 @@ impl<'a, T: Copy> Collector<'a, T> for Vec<T> {
         self.push(*value);
     }
 }
+
+
+impl<'a, T: Copy> Collector<'a, T> for Vec<(u8, T)> {
+    #[inline]
+    fn push(&mut self, distance: u8, value: &'a T) {
+        self.push((distance, *value));
+    }
+}
