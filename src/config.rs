@@ -8,7 +8,7 @@ pub struct Config {
     /// do not match other cases
     pub default: LevenshteinConfig,
     /// Pairs of (`config`, `len`)
-    /// `len` is the max length of key that `config` will be applied to.
+    /// `len` is the max length of key in chars that `config` will be applied to.
     /// 
     /// If the explanation is chaotic
     /// then see the `choose_dfa_builder` method on `FuzzyTrie`

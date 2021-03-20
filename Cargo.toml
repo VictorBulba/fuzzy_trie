@@ -1,6 +1,6 @@
 [package]
 name = "fuzzy_trie"
-version = "1.1.0"
+version = "1.1.1"
 authors = ["VictorBulba"]
 edition = "2018"
 license = "MIT"

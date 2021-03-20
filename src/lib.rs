@@ -112,7 +112,7 @@ impl<T> FuzzyTrie<T> {
             Node::Branch(_, branches) => branches,
             _ => unreachable!(),
         };   
-        let dfa = self.choose_dfa_builder(key.len()).build_dfa(key);
+        let dfa = self.choose_dfa_builder(key.chars().count()).build_dfa(key);
         for br in branches {
             br.fuzzy_search(&self.values, &dfa, dfa.initial_state(), out);
         }
