@@ -53,3 +53,23 @@ fn test_custom_config() {
     assert_eq!(Some(45), hello_iter.next());
     assert_eq!(None, hello_iter.next());
 }
+
+#[test]
+fn test_unicode() {
+    let mut index = FuzzyTrie::new(2, false);
+
+    index.insert("молоко").insert(0i32);
+    index.insert("малоко").insert(1i32);
+    index.insert("малако").insert(2i32);
+    index.insert("малака").insert(3i32);
+
+    let mut result: Vec<(u8, i32)> = Vec::new();
+    index.fuzzy_search("молоко", &mut result);
+
+    let mut result_iter = result.into_iter();
+
+    assert_eq!(Some((0, 0)), result_iter.next());
+    assert_eq!(Some((1, 1)), result_iter.next());
+    assert_eq!(Some((2, 2)), result_iter.next());
+    assert_eq!(None, result_iter.next());
+}
