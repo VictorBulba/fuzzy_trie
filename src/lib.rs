@@ -119,6 +119,23 @@ impl<T> FuzzyTrie<T> {
     }
 
 
+    /// Makes fuzzy search on prefix with given key and puts result to out collector
+    /// See `Collector` for additional information
+    #[inline]
+    pub fn prefix_fuzzy_search<'a, C: Collector<'a, T>>(&'a self, key: &str, out: &mut C) {
+        let branches = match &self.root {
+            Node::Branch(_, branches) => branches,
+            _ => unreachable!(),
+        };
+        let dfa = self
+            .choose_dfa_builder(key.chars().count())
+            .build_prefix_dfa(key);
+        for br in branches {
+            br.fuzzy_search(&self.values, &dfa, dfa.initial_state(), out);
+        }
+    }
+
+
     /// Iterator over values
     #[inline]
     pub fn iter(&self) -> Iter<'_, T> {
